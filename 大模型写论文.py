@@ -4,17 +4,19 @@ from datetime import datetime
 
 # ---------- 0. 四大模型配置 ----------
 MODEL_CONFIGS = [
-    {  # DeepSeek Reasoner R1
-        "name": "deepseek",
-        "init": lambda: __import__("openai").OpenAI(
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-            base_url="https://api.deepseek.com"
+    {  # Grok 4
+        "name": "grok",
+        "init": lambda: __import__("xai_sdk").Client(
+            api_host="api.x.ai",
+            api_key=os.getenv("XAI_API_KEY")
         ),
-        "call": lambda cli, sys_msg, usr_msg, temp=None: cli.chat.completions.create(
-            model="deepseek-reasoner",
-            messages=[{"role":"system","content":sys_msg},
-                      {"role":"user","content":usr_msg}]
-        ).choices[0].message.content
+        "call": lambda cli, sys_msg, usr_msg, temp=None: (
+            (lambda chat: (
+                chat.append(__import__("xai_sdk.chat", fromlist=["system"]).system(sys_msg)),
+                chat.append(__import__("xai_sdk.chat", fromlist=["user"]).user(usr_msg)),
+                chat.sample().content
+            ))(cli.chat.create(model="grok-4-0709", temperature=0))
+        )[-1]
     },
     {  # o3
         "name": "o3",
@@ -27,13 +29,25 @@ MODEL_CONFIGS = [
             reasoning_effort="medium"
         ).choices[0].message.content
     },
+    {  # DeepSeek Reasoner R1
+        "name": "deepseek",
+        "init": lambda: __import__("openai").OpenAI(
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
+            base_url="https://api.deepseek.com"
+        ),
+        "call": lambda cli, sys_msg, usr_msg, temp=None: cli.chat.completions.create(
+            model="deepseek-reasoner",
+            messages=[{"role":"system","content":sys_msg},
+                      {"role":"user","content":usr_msg}]
+        ).choices[0].message.content
+    },
     {  # Gemini 2.5 Pro
         "name": "gemini",
         "init": lambda: __import__("google.genai", fromlist=["Client"]).Client(
             api_key=os.getenv("GEMINI_API_KEY")
         ),
         "call": lambda cli, sys_msg, usr_msg, temp=None: cli.models.generate_content(
-            model="gemini-2.5-pro-preview-05-06",
+            model="gemini-2.5-pro",
             contents=f"{sys_msg}\n\n{usr_msg}"
         ).text
     },

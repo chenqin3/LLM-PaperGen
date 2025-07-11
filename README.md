@@ -13,8 +13,9 @@ LLM-PaperGen 是一个让大语言模型自动生成学术论文的流程。主�
 
 ## 支持的模型
 
-脚本内置 DeepSeek、OpenAI(o3)、Gemini 2.5 与 Claude‑4 Opus 四种模型，并依次对每个模型执行全部步骤。运行前需要设置：
+脚本目前已支持 **Grok**、**DeepSeek-R1 0528**、**OpenAI(o3)**、**Gemini 2.5 Pro** 与 **Claude‑4 Opus** 五种模型，并依次对每个模型执行全部步骤。运行前需要设置相应的 API Key：
 
+- `GROK_API_KEY`
 - `DEEPSEEK_API_KEY`
 - `OPENAI_API_KEY`
 - `GEMINI_API_KEY`
@@ -33,9 +34,9 @@ LLM-PaperGen 是一个让大语言模型自动生成学术论文的流程。主�
 4. **结果分析与摘要**（STEP 9、10）
    - LLM 根据回归结果给出分析并生成论文摘要
 5. **整合 Markdown 文档**（STEP 11）
-   - 汇总所有内容生成 `paper_*.md`
+   - 汇总所有内容生成 `paper_*.md` 与 `paper_*.pdf`
 
-执行完毕后，会在当前目录下生成一套包含图片、结果文本和 Markdown 论文的文件。
+执行完毕后，会在当前目录下生成一套包含图片、结果文本、Markdown 论文和 PDF 成品的文件。
 
 ## 使用方法
 
@@ -46,6 +47,10 @@ python 大模型写论文.py
 ```
 
 脚本会依次使用所有模型生成论文版本。
+
+## 新增论文样本
+
+我们已经更新了使用 `Gemini 2.5 Pro` 和 `DeepSeek-R1 0528` 新模型的分析，并新增了对 `Grok` 模型的支持。最新的论文样本（`paper_20250711_*.pdf`）已上传，欢迎查阅。
 
 ## 许可证
 
